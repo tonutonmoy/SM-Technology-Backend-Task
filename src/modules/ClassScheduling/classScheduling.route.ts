@@ -13,9 +13,9 @@ router.get(
   ClassScheduleControllers.getClassSchedule
 );
 router.get(
-  "/singleClassSchedule/:id",
+  "/getTranierClassSchedule/:id",
   auth(USER_ROLE.Admin, USER_ROLE.Trainer),
-  ClassScheduleControllers.getSingleClassSchedule
+  ClassScheduleControllers.getTranierClassSchedule
 );
 router.post(
   "/create",
@@ -24,8 +24,8 @@ router.post(
   ClassScheduleControllers.createClassSchedule
 );
 router.put(
-  "/update/:id",
-  auth(USER_ROLE.Admin,USER_ROLE.Trainee),
+  "/bookingClass/:id",
+  auth(USER_ROLE.Trainee),
   ClassScheduleControllers.updateClassSchedule
 );
 router.delete(

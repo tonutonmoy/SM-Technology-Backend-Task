@@ -25,9 +25,9 @@ const getClassSchedule = catchAsync(async (req, res) => {
     data: result,
   });
 });
-const getSingleClassSchedule = catchAsync(async (req, res) => {
+const getTranierClassSchedule = catchAsync(async (req, res) => {
 
-  const result = await ClassScheduleServices.getSingleClassScheduleDB(req?.params?.id);
+  const result = await ClassScheduleServices.getTranierClassScheduleDB(req?.params?.id);
 
   res.send({
     statusCode: 202,
@@ -68,7 +68,7 @@ const deleteClassSchedule = catchAsync(async (req, res) => {
 export const ClassScheduleControllers = {
   createClassSchedule,
   getClassSchedule,
-  getSingleClassSchedule,
+  getTranierClassSchedule,
   updateClassSchedule,
   deleteClassSchedule,
 };

@@ -17,18 +17,60 @@ const createClassScheduleDB = async (payload: ClassSchedule) => {
   });
 
   if (classCount >= 5) {
-    throw new Error("Maximum of 5 class schedules already reached for the day.");
+    throw {
+      success: false,
+       message: "Maximum of 5 class ",
+       errorDetails: 'Maximum of 5 class schedules already reached for the day.'
+
+    };
+    
   }
 
   // Step 2: Ensure that each class lasts for exactly 2 hours
-  const classDuration = (new Date(`1970-01-01T${endTime}`).getTime() - new Date(`1970-01-01T${startTime}`).getTime()) / (1000 * 60 * 60);
-  if (classDuration !== 2) {
-    throw new Error("Each class schedule must last for exactly 2 hours.");
+
+  // Parse times in "HH:MM AM/PM" format to Date objects
+  const parseTime = (time: string, date: Date): Date => {
+    const [timePart, period] = time.split(' ');
+    const [hours, minutes] = timePart.split(':').map(Number);
+
+    let adjustedHours = hours;
+    if (period === 'PM' && hours < 12) {
+      adjustedHours += 12;
+    } else if (period === 'AM' && hours === 12) {
+      adjustedHours = 0;
+    }
+
+    const timeDate = new Date(date);
+    timeDate.setHours(adjustedHours, minutes, 0, 0);
+    return timeDate;
+  };
+
+  const classStartTime = parseTime(startTime, date);
+  const classEndTime = parseTime(endTime, date);
+
+  const classDurationInMs = classEndTime.getTime() - classStartTime.getTime();
+  const classDurationInHours = classDurationInMs / (1000 * 60 * 60);
+
+  if (classDurationInHours !== 2) {
+    throw {
+      success: false,
+       message: "2 hours.",
+       errorDetails: 'Each class schedule must last for exactly 2 hours.'
+
+    };
+   
   }
-  
-  const result = await ClassScheduleModel.create(payload);
-  return result;
+
+  // Step 3: Create the class schedule
+  try {
+    const result = await ClassScheduleModel.create(payload);
+    return result;
+  } catch (error) {
+    console.error("Error creating class schedule:", error);
+    throw error; // Re-throw error after logging
+  }
 };
+
 
 const getAllClassScheduleDB = async () => {
  
@@ -37,16 +79,62 @@ const getAllClassScheduleDB = async () => {
   return result;
 };
 
-const getSingleClassScheduleDB = async (id: string | undefined) => {
-  const result = await ClassScheduleModel.findOne({ _id: id });
+const getTranierClassScheduleDB = async (id: string | undefined) => {
+  const result = await ClassScheduleModel.find({ trainerId: id });
   return result;
 };
-const updateClassScheduleDB = async (id: string, payload:any) => {
-  const result = await ClassScheduleModel.updateOne({ _id: id }, payload);
+const updateClassScheduleDB = async (id: string, {trainees}:any) => {
+  // Check if the class exists
+  const isExist = await ClassScheduleModel.findById(id);
+
+  if (!isExist) {
+    throw {
+      success: false,
+      message: "Class Not Exist.",
+      errorDetails: 'This class does not exist.',
+    };
+  }
+
+  // Check if the number of trainees has reached the limit
+  if (isExist.trainees && isExist.trainees.length >= 10) {
+    throw {
+      success: false,
+      message: "Class Full",
+      errorDetails: 'No more spots available in this class.',
+    };
+  }
+
+  if (isExist) {
+    // Check if the trainee is already in the trainees array
+    const alreadyBooked = await ClassScheduleModel.findOne({
+      _id: id,
+      trainees: { $in: [trainees] },  // Check if the traineeId is already in the trainees array
+    });
+  
+    if (alreadyBooked) {
+      throw {
+        success: false,
+        message: "Already booked",
+        errorDetails: 'You have already booked this class.',
+      };
+    }
+  }
+  
+
+  // Update the class by adding the new trainee
+  const updateResult = await ClassScheduleModel.updateOne(
+    { _id: id },
+    { $push: { trainees: trainees },  $inc: { maxTrainees: -1 }  } // Use the $push operator to add the traineeId to the trainees array
+  );
+
+  // Fetch and return the updated class schedule if the update was successful
+  let result;
+  if (updateResult?.acknowledged) {
+    result = await ClassScheduleModel.findById(id);
+  }
 
   return result;
 };
-
 const deleteClassScheduleModelDB = async (_id: string) => {
   const result= await ClassScheduleModel.deleteOne({ _id })
 
@@ -57,7 +145,7 @@ const deleteClassScheduleModelDB = async (_id: string) => {
 export const ClassScheduleServices = {
   createClassScheduleDB,
   getAllClassScheduleDB,
-  getSingleClassScheduleDB,
+  getTranierClassScheduleDB,
   updateClassScheduleDB,
   deleteClassScheduleModelDB,
 };
