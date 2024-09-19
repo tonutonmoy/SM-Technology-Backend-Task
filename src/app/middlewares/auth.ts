@@ -9,8 +9,9 @@ import UserModel from "../../modules/user/user.model";
 type TRole = "Admin" | "Trainer"|"Trainee";
 const auth = (...requiredRoles: TRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req?.headers?.authorization;
-
+    const Btoken = req?.headers?.authorization;
+const token = Btoken?.split(' ')[1];
+console.log(token,'tokkk')
     if (!token) {
       console.log("token pawa jai ni");
       throw {
@@ -19,7 +20,7 @@ const auth = (...requiredRoles: TRole[]) => {
         errorMessage: "Unauthorized",
       };
     }
-
+  console.log(token)
     let decoded;
 
     try {
@@ -42,8 +43,9 @@ const auth = (...requiredRoles: TRole[]) => {
       console.log("role match korini");
       throw {
         success: false,
-        statusCode: 400,
-        errorMessage: "Unauthorized",
+         message: "Unauthorized access.",
+         errorDetails: `You must be an ${requiredRoles} to perform this action.`
+
       };
     }
 

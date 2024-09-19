@@ -1,6 +1,6 @@
 import config from "../../app/config";
 import UserModel from "./user.model";
-import jwt from "jsonwebtoken";
+
 
 import { TUser } from "./user.interface";
 import { jwtHelpers } from "../../helpers/jwtHelpers";
@@ -36,6 +36,7 @@ const registerUserToDB = async (data: TUser) => {
 
   return result;
 };
+
 const loginUserToDB = async (data: TUser) => {
   const res = await UserModel.findOne({ email: data?.email });
 
@@ -79,18 +80,24 @@ const loginUserToDB = async (data: TUser) => {
   return result;
 };
 
-const getUserToDB = async (email:string) => {
+const getUserToDB = async () => {
   console.log('ksksksks')
-  const result = await UserModel.findOne({email});
+  const result = await UserModel.find();
   return result;
 };
 const UpdateUserToDB = async (email: string, updateData: any) => {
   try {
     // Use the email to find the user and update with the provided data
-    const result = await UserModel.updateOne(
+    const updateResult = await UserModel.updateOne(
       { email },          // Filter to find the document
        updateData  // Update operation
     );
+
+    let result;
+    
+    if(updateResult?.acknowledged){
+       result = await UserModel.findOne({email});
+    }
 
     console.log(updateData)
     console.log(result)
@@ -106,5 +113,6 @@ export const UserServices = {
   registerUserToDB,
   loginUserToDB,
   getUserToDB,
-  UpdateUserToDB
+  UpdateUserToDB,
+ 
 };

@@ -15,6 +15,17 @@ const registerUser = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const createTrainer = catchAsync(async (req, res) => {
+  const result = await UserServices.registerUserToDB(req?.body);
+
+  res.send({
+    statusCode: 201,
+    success: true,
+
+    message: "User registered successfully",
+    data: result,
+  });
+});
 
 const loginUser = catchAsync(async (req, res) => {
   console.log(req.headers.authorization, "h");
@@ -31,17 +42,8 @@ const loginUser = catchAsync(async (req, res) => {
 
 
 const getUser = catchAsync(async (req, res) => {
-  const token = req.headers.authorization as string;
-
-  if (!token) {
-    throw new Error("Unauthorized Access");
-  }
-  const { email } = jwtHelpers.verifyToken(
-    token,
-    config.jwt_secret as string 
-  );
-
-  const result = await UserServices.getUserToDB(email);
+ 
+  const result = await UserServices.getUserToDB();
 
   res.send({
     statusCode: 200,
@@ -54,7 +56,7 @@ const getUser = catchAsync(async (req, res) => {
 
 
 const updateUser = catchAsync(async (req, res) => {
-  const token = req.headers.authorization as string;
+  const token = req?.headers?.authorization?.split(' ')[1] as string;
 
   if (!token) {
     throw new Error("Unauthorized Access");
@@ -80,5 +82,6 @@ export const USerControllers = {
   registerUser,
   loginUser,
   getUser,
-  updateUser
+  updateUser,
+  createTrainer
 };

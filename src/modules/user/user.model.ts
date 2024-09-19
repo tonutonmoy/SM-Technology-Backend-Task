@@ -11,7 +11,7 @@ const userSchema = new Schema<TUser, UserModel>({
   },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, required: true },
+  role: { type: String, default:"Trainee" },
   image: { type: String, default:"not available" },
   country: { type: String , default:"not available"},
   city: { type: String, default:"not available" },
