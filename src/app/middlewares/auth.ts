@@ -13,20 +13,20 @@ const auth = (...requiredRoles: TRole[]) => {
 const token = Btoken?.split(' ')[1];
 
     if (!token) {
-      console.log("token pawa jai ni");
+      
       throw {
         success: false,
         statusCode: 400,
         errorMessage: "Unauthorized",
       };
     }
-  console.log(token,';;;;;;')
+ 
     let decoded;
 
     try {
       decoded = jwt.verify(token, config.jwt_secret as string) as JwtPayload;
     } catch (err) {
-      console.log("decoded hoini");
+      
       throw {
         success: false,
         statusCode: 400,
@@ -36,8 +36,7 @@ const token = Btoken?.split(' ')[1];
 
     const { _id, email, username, role, iat } = decoded;
 
-    console.log(role, "role");
-    console.log(requiredRoles, "requiredRoles");
+   
     //  role checking
     if (requiredRoles && !requiredRoles.includes(role)) {
       console.log("role match korini");
@@ -53,14 +52,14 @@ const token = Btoken?.split(' ')[1];
     const user = await UserModel.isUserExistsByCustomId(_id);
 
     if (!user) {
-      console.log("user nei");
+     
       throw {
         success: false,
         statusCode: 400,
         errorMessage: "Unauthorized",
       };
     }
-    console.log("all done");
+    
     next();
   });
 };

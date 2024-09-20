@@ -1,7 +1,7 @@
 import { ClassSchedule } from "./classScheduling.interface";
 import ClassScheduleModel from "./classScheduling.model";
 
-
+//  create calss Schedule
 const createClassScheduleDB = async (payload: ClassSchedule) => {
   const { date, trainerId, startTime, endTime } = payload;
 
@@ -28,7 +28,7 @@ const createClassScheduleDB = async (payload: ClassSchedule) => {
 
   // Step 2: Ensure that each class lasts for exactly 2 hours
 
-  // Parse times in "HH:MM AM/PM" format to Date objects
+  
   const parseTime = (time: string, date: Date): Date => {
     const [timePart, period] = time.split(' ');
     const [hours, minutes] = timePart.split(':').map(Number);
@@ -67,11 +67,11 @@ const createClassScheduleDB = async (payload: ClassSchedule) => {
     return result;
   } catch (error) {
     console.error("Error creating class schedule:", error);
-    throw error; // Re-throw error after logging
+    throw error; 
   }
 };
 
-
+//  get all Classes
 const getAllClassScheduleDB = async () => {
  
 
@@ -79,10 +79,13 @@ const getAllClassScheduleDB = async () => {
   return result;
 };
 
+//  Get Tranier Classes
 const getTranierClassScheduleDB = async (id: string | undefined) => {
   const result = await ClassScheduleModel.find({ trainerId: id });
   return result;
 };
+
+//  Booking class
 const updateClassScheduleDB = async (id: string, {trainees}:any) => {
   // Check if the class exists
   const isExist = await ClassScheduleModel.findById(id);
@@ -135,6 +138,8 @@ const updateClassScheduleDB = async (id: string, {trainees}:any) => {
 
   return result;
 };
+
+// Cancel class
 const CancelClassScheduleModelDB = async (_id: string, { trainees }: any) => {
   // Check if the class with the specified _id exists and contains the trainee
   const checking = await ClassScheduleModel.findOne({
@@ -165,7 +170,7 @@ const CancelClassScheduleModelDB = async (_id: string, { trainees }: any) => {
 };
 
 
-
+//  delete class
 const deleteClassScheduleModelDB = async (_id: string) => {
   const checking= await ClassScheduleModel.findOne({ _id });
 
@@ -178,7 +183,7 @@ const deleteClassScheduleModelDB = async (_id: string) => {
     };
   }
   const updateResult:any= await ClassScheduleModel.deleteOne({ _id })
-console.log(updateResult)
+
   let result
   if (updateResult?.acknowledged && updateResult?.deletedCount >= 1) {
     result="Class deleted"

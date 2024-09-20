@@ -5,6 +5,7 @@ import UserModel from "./user.model";
 import { TUser } from "./user.interface";
 import { jwtHelpers } from "../../helpers/jwtHelpers";
 
+//  register user
 const registerUserToDB = async (data: TUser) => {
   const res = await UserModel.create(data);
 
@@ -37,6 +38,7 @@ const registerUserToDB = async (data: TUser) => {
   return result;
 };
 
+//  login user
 const loginUserToDB = async (data: TUser) => {
   const res = await UserModel.findOne({ email: data?.email });
 
@@ -75,16 +77,20 @@ const loginUserToDB = async (data: TUser) => {
     token,
   };
 
-  console.log(token, "token ready");
+  
 
   return result;
 };
 
+
+// get all user
 const getUserToDB = async () => {
-  console.log('ksksksks')
+  
   const result = await UserModel.find();
   return result;
 };
+
+//  update profile
 const UpdateUserToDB = async (email: string, updateData: any) => {
   try {
     // Use the email to find the user and update with the provided data
@@ -99,9 +105,7 @@ const UpdateUserToDB = async (email: string, updateData: any) => {
        result = await UserModel.findOne({email});
     }
 
-    console.log(updateData)
-    console.log(result)
-    // Return the result of the update operation
+   
     return result;
   } catch (error) {
     // Handle errors if necessary
@@ -109,6 +113,8 @@ const UpdateUserToDB = async (email: string, updateData: any) => {
     throw error;
   }
 };
+
+//  update Tranier profile
 const UpdateTrainerToDB = async (_id: string, updateData: any) => {
   try {
     // Use the email to find the user and update with the provided data
@@ -118,7 +124,7 @@ const UpdateTrainerToDB = async (_id: string, updateData: any) => {
     );
 
     let result;
-    console.log(updateResult)
+  
     if(updateResult?.acknowledged && updateResult?.modifiedCount>=1){
        result = await UserModel.findOne({_id});
     }
@@ -130,9 +136,7 @@ const UpdateTrainerToDB = async (_id: string, updateData: any) => {
       };
     }
 
-    console.log(updateData)
-    console.log(result)
-    // Return the result of the update operation
+    
     return result;
   } catch (error) {
     // Handle errors if necessary
@@ -140,6 +144,8 @@ const UpdateTrainerToDB = async (_id: string, updateData: any) => {
     throw error;
   }
 };
+
+// delete Tranier
 const DeleteTrainerToDB = async (_id: string) => {
   try {
 
@@ -161,7 +167,7 @@ const DeleteTrainerToDB = async (_id: string) => {
     );
 
     let result;
-    console.log(updateResult)
+    
     if (updateResult?.acknowledged && updateResult?.deletedCount >= 1) {
       result="Class deleted"
     }
@@ -174,8 +180,7 @@ const DeleteTrainerToDB = async (_id: string) => {
     }
 
  
-    console.log(result)
-    // Return the result of the update operation
+    
     return result;
   } catch (error) {
     // Handle errors if necessary
