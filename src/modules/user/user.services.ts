@@ -109,10 +109,86 @@ const UpdateUserToDB = async (email: string, updateData: any) => {
     throw error;
   }
 };
+const UpdateTrainerToDB = async (_id: string, updateData: any) => {
+  try {
+    // Use the email to find the user and update with the provided data
+    const updateResult = await UserModel.updateOne(
+      { _id, role: "Trainer" },        // Filter to find the document
+       updateData  // Update operation
+    );
+
+    let result;
+    console.log(updateResult)
+    if(updateResult?.acknowledged && updateResult?.modifiedCount>=1){
+       result = await UserModel.findOne({_id});
+    }
+    else{
+      throw {
+        success: false,
+        statusCode: 400,
+        errorMessage: " not update. try agin with Trainer data ",
+      };
+    }
+
+    console.log(updateData)
+    console.log(result)
+    // Return the result of the update operation
+    return result;
+  } catch (error) {
+    // Handle errors if necessary
+    console.error("Error updating user:", error);
+    throw error;
+  }
+};
+const DeleteTrainerToDB = async (_id: string) => {
+  try {
+
+
+    const checking= await UserModel.findOne( { _id, role: "Trainer" },  );
+
+
+    if (!checking) {
+      throw {
+        success: false,
+        message: "Not found Trainer",
+        errorDetails: "Not found the Trainer.",
+      };
+    }
+    // Use the email to find the user and update with the provided data
+    const updateResult :any= await UserModel.deleteOne(
+      { _id, role: "Trainer" },        
+      
+    );
+
+    let result;
+    console.log(updateResult)
+    if (updateResult?.acknowledged && updateResult?.deletedCount >= 1) {
+      result="Class deleted"
+    }
+    else{
+      throw {
+        success: false,
+        statusCode: 400,
+        errorMessage: " not update. try agin with Trainer data ",
+      };
+    }
+
+ 
+    console.log(result)
+    // Return the result of the update operation
+    return result;
+  } catch (error) {
+    // Handle errors if necessary
+    console.error("Error updating user:", error);
+    throw error;
+  }
+};
 export const UserServices = {
   registerUserToDB,
   loginUserToDB,
   getUserToDB,
   UpdateUserToDB,
+  UpdateTrainerToDB,
+  DeleteTrainerToDB
  
 };

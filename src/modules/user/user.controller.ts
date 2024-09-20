@@ -78,10 +78,43 @@ const updateUser = catchAsync(async (req, res) => {
   });
 });
 
+
+const updateTrainer = catchAsync(async (req, res) => {
+ 
+
+ 
+  const result = await UserServices.UpdateTrainerToDB(req?.params?.id,req.body);
+
+  res.send({
+    statusCode: 201,
+    success: true,
+
+    message: "Trainer update successful",
+    data: result,
+  });
+});
+
+const deleteTrainer = catchAsync(async (req, res) => {
+ 
+
+ const {_id}= req?.body
+  const result = await UserServices.DeleteTrainerToDB(_id);
+
+  res.send({
+    statusCode: 203,
+    success: true,
+
+    message: "Trainer deleted successful",
+    data: result,
+  });
+});
+
 export const USerControllers = {
   registerUser,
   loginUser,
   getUser,
   updateUser,
-  createTrainer
+  createTrainer,
+  updateTrainer,
+  deleteTrainer
 };

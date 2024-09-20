@@ -29,9 +29,26 @@ router.post(
 );
 
 router.put(
+  
   "/UpdateProfile",
+  auth(USER_ROLE.Trainee),
   
   USerControllers.updateUser
+);
+router.put(
+  
+  "/UpdateTrainerProfile/:id",
+  auth(USER_ROLE.Admin),
+  
+  USerControllers.updateTrainer
+);
+
+router.delete(
+  
+  "/DeleteTrainerProfile",
+  auth(USER_ROLE.Admin),
+  
+  USerControllers.deleteTrainer
 );
 
 export const UserRoutes = router;

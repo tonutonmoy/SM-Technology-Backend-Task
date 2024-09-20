@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.get(
   "/",
-  auth(USER_ROLE.Admin),
+  
   ClassScheduleControllers.getClassSchedule
 );
 router.get(
