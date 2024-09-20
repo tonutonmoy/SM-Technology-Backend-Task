@@ -48,11 +48,22 @@ const updateClassSchedule = catchAsync(async (req, res) => {
   res.send({
     statusCode: 203,
     success: true,
-    message: "ClassSchedule   update successfully",
+    message: "Class Booking successfully",
     data: result,
   });
 });
 
+const CancelClassSchedule = catchAsync(async (req, res) => {
+  const payload = req?.body;
+  const result = await ClassScheduleServices.CancelClassScheduleModelDB(req?.params?.id,payload);
+
+  res.send({
+    statusCode: 203,
+    success: true,
+    message: "Class Booking cancel successfully",
+    data: result,
+  });
+});
 const deleteClassSchedule = catchAsync(async (req, res) => {
   const payload = req?.body;
   const result = await ClassScheduleServices.deleteClassScheduleModelDB(payload);
@@ -71,4 +82,5 @@ export const ClassScheduleControllers = {
   getTranierClassSchedule,
   updateClassSchedule,
   deleteClassSchedule,
+  CancelClassSchedule
 };

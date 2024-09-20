@@ -135,9 +135,54 @@ const updateClassScheduleDB = async (id: string, {trainees}:any) => {
 
   return result;
 };
-const deleteClassScheduleModelDB = async (_id: string) => {
-  const result= await ClassScheduleModel.deleteOne({ _id })
+const CancelClassScheduleModelDB = async (_id: string, { trainees }: any) => {
+  // Check if the class with the specified _id exists and contains the trainee
+  const checking = await ClassScheduleModel.findOne({
+    _id,
+    trainees: { $in: [trainees] }, // Check if 'trainees' array contains the trainee
+  });
 
+  if (!checking) {
+    throw {
+      success: false,
+      message: "Not found booking",
+      errorDetails: "Not found booked class or trainee doesn't exist in the list.",
+    };
+  }
+
+  // Proceed to remove the trainee from the class's 'trainees' array
+  const updateResult = await ClassScheduleModel.updateOne(
+    { _id },
+    { $pull: { trainees: trainees }, $inc: { maxTrainees: +1 }} // Remove the trainee from the trainees array
+  );
+
+  let result;
+  if (updateResult?.acknowledged && updateResult?.modifiedCount >= 1) {
+    result = await ClassScheduleModel.findOne({ _id });
+  }
+
+  return result;
+};
+
+
+
+const deleteClassScheduleModelDB = async (_id: string) => {
+  const checking= await ClassScheduleModel.findOne({ _id });
+
+
+  if (!checking) {
+    throw {
+      success: false,
+      message: "Not found Class",
+      errorDetails: "Not found the ClassSchedule.",
+    };
+  }
+  const updateResult:any= await ClassScheduleModel.deleteOne({ _id })
+console.log(updateResult)
+  let result
+  if (updateResult?.acknowledged && updateResult?.deletedCount >= 1) {
+    result="Class deleted"
+  }
   
   return result;
 };
@@ -148,4 +193,5 @@ export const ClassScheduleServices = {
   getTranierClassScheduleDB,
   updateClassScheduleDB,
   deleteClassScheduleModelDB,
+  CancelClassScheduleModelDB
 };

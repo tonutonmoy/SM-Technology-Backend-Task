@@ -28,6 +28,11 @@ router.put(
   auth(USER_ROLE.Trainee),
   ClassScheduleControllers.updateClassSchedule
 );
+router.put(
+  "/bookingClassCancel/:id",
+  auth(USER_ROLE.Trainee),
+  ClassScheduleControllers.CancelClassSchedule
+);
 router.delete(
   "/delete",
   auth(USER_ROLE.Admin),

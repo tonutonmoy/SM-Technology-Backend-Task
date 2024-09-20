@@ -11,7 +11,7 @@ const auth = (...requiredRoles: TRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const Btoken = req?.headers?.authorization;
 const token = Btoken?.split(' ')[1];
-console.log(token,'tokkk')
+
     if (!token) {
       console.log("token pawa jai ni");
       throw {
@@ -20,7 +20,7 @@ console.log(token,'tokkk')
         errorMessage: "Unauthorized",
       };
     }
-  console.log(token)
+  console.log(token,';;;;;;')
     let decoded;
 
     try {
